@@ -4,7 +4,7 @@ import com.tingisweb.assignment.dto.AuthorDto;
 import com.tingisweb.assignment.dto.BlogPostDto;
 import com.tingisweb.assignment.entity.BlogPostEntity;
 import com.tingisweb.assignment.entity.UserEntity;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
+import com.tingisweb.assignment.errorhandling.exception.*;
 import com.tingisweb.assignment.mapper.BlogPostMapper;
 import com.tingisweb.assignment.repository.BlogPostRepository;
 import com.tingisweb.assignment.security.SecurityService;
@@ -14,12 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class BlogPostServiceImplTest {
 
@@ -177,14 +182,196 @@ class BlogPostServiceImplTest {
     }
 
     @Test
-    void update() {
+    void update_Ko_MissingId() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+
+        assertThrows(
+                MissingIdException.class,
+                () -> blogPostService.update(null,blogPostDto)
+        );
     }
 
     @Test
-    void delete() {
+    void update_Ko_NullDto() {
+        Long id = 1L;
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> blogPostService.update(id,null)
+        );
     }
 
     @Test
-    void findAll() {
+    void update_Ko_TryingToUpdateAnotherEntity() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+        blogPostDto.setId(2L);
+        Long id = 1L;
+
+        assertThrows(
+                EditAnotherEntityException.class,
+                () -> blogPostService.update(id,blogPostDto)
+        );
+    }
+
+    @Test
+    void update_Ko_unauthorizedAction() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+        blogPostDto.setId(1L);
+        Long id = 1L;
+
+        BlogPostEntity existingEntity = new BlogPostEntity();
+        existingEntity.setId(id);
+        UserEntity author = new UserEntity();
+        author.setId(1L);
+        existingEntity.setAuthor(author);
+
+        UserEntity anotherAuthor = new UserEntity();
+        author.setId(2L);
+
+        when(blogPostRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+        when(securityService.getAuthenticatedUser()).thenReturn(anotherAuthor);
+        assertThrows(UnauthorizedException.class,
+                () -> blogPostService.update(id, blogPostDto));
+    }
+
+    @Test
+    void update_Ko_BlogPostNotFound() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+        blogPostDto.setId(1L);
+        Long id = 1L;
+
+        when(blogPostRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(
+                ObjectNotFoundException.class,
+                () -> blogPostService.update(id,blogPostDto)
+        );
+    }
+
+    @Test
+    void update_Ok_BlogPostUpdated() {
+        BlogPostDto updatedDto = new BlogPostDto();
+        updatedDto.setId(1L);
+        UserEntity author = new UserEntity();
+        author.setId(1L);
+        updatedDto.setAuthor(new AuthorDto(author.getId(),
+                "author name"));
+        updatedDto.setTitle("Updated Title");
+        updatedDto.setContent("Updated Content");
+
+        Long id = 1L;
+
+        BlogPostEntity existingEntity = new BlogPostEntity();
+        existingEntity.setId(1L);
+        existingEntity.setAuthor(author);
+        existingEntity.setTitle("Title");
+        existingEntity.setContent("Content");
+
+        when(blogPostRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+        when(securityService.getAuthenticatedUser()).thenReturn(author);
+
+        BlogPostEntity updatedEntity = new BlogPostEntity();
+        updatedEntity.setId(1L);
+        updatedEntity.setAuthor(author);
+        updatedEntity.setTitle("Updated Title");
+        updatedEntity.setContent("Updated Content");
+
+        when(blogPostMapper.toEntity(updatedDto)).thenReturn(updatedEntity);
+        when(blogPostRepository.save(updatedEntity)).thenReturn(updatedEntity);
+        when(blogPostMapper.toDto(updatedEntity)).thenReturn(updatedDto);
+
+        BlogPostDto result = blogPostService.update(id, updatedDto);
+
+        assertNotNull(result);
+        assertEquals(existingEntity.getId(), result.getId());
+        assertEquals(updatedDto.getTitle(), result.getTitle());
+        assertEquals(updatedDto.getContent(), result.getContent());
+    }
+
+    @Test
+    void delete_Ko_MissingId() {
+        assertThrows(
+                MissingIdException.class,
+                () -> blogPostService.delete(null)
+        );
+    }
+
+    @Test
+    void delete_Ko_unauthorizedAction() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+        blogPostDto.setId(1L);
+        Long id = 1L;
+
+        BlogPostEntity existingEntity = new BlogPostEntity();
+        existingEntity.setId(id);
+        UserEntity author = new UserEntity();
+        author.setId(1L);
+        existingEntity.setAuthor(author);
+
+        UserEntity anotherAuthor = new UserEntity();
+        author.setId(2L);
+
+        when(blogPostRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+        when(securityService.getAuthenticatedUser()).thenReturn(anotherAuthor);
+        assertThrows(UnauthorizedException.class,
+                () -> blogPostService.delete(id));
+    }
+
+    @Test
+    void delete_Ok_blogPostDeleted() {
+        BlogPostDto blogPostDto = new BlogPostDto();
+        blogPostDto.setId(1L);
+        Long id = 1L;
+
+        BlogPostEntity existingEntity = new BlogPostEntity();
+        existingEntity.setId(id);
+        UserEntity author = new UserEntity();
+        author.setId(1L);
+        existingEntity.setAuthor(author);
+
+        when(blogPostRepository.findById(id)).thenReturn(Optional.of(existingEntity));
+        when(securityService.getAuthenticatedUser()).thenReturn(author);
+
+        blogPostService.delete(id);
+
+        verify(blogPostRepository).deleteById(id);
+    }
+
+    @Test
+    void findAll_Ko_EmptyPage() {
+        int page = 0;
+        int size = 10;
+
+        Page<BlogPostEntity> entitiesEmptyPage = new PageImpl<>(new ArrayList<>());
+
+        when(blogPostRepository.findAll(any(Pageable.class))).thenReturn(entitiesEmptyPage);
+
+        assertThrows(NoContentException.class,
+                () -> blogPostService.findAll(page,size));
+    }
+
+    @Test
+    void findAll_Ok_getNotEmptyPage() {
+        int page = 0;
+        int size = 10;
+
+        BlogPostEntity blogPostEntity = new BlogPostEntity();
+
+        Page<BlogPostEntity> entitiesPage =
+                new PageImpl<>(List.of(blogPostEntity));
+
+        when(blogPostRepository.findAll(any(Pageable.class))).thenReturn(entitiesPage);
+
+        BlogPostDto blogPostDto = new BlogPostDto();
+
+        Page<BlogPostDto> dtosPage =
+                new PageImpl<>(List.of(blogPostDto));
+
+        when(blogPostMapper.toPageDto(entitiesPage)).thenReturn(dtosPage);
+
+        Page<BlogPostDto> result = blogPostService.findAll(page,size);
+
+        assertNotNull(result);
+        assertEquals(1,result.getNumberOfElements());
     }
 }
