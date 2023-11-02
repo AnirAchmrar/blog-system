@@ -4,10 +4,7 @@ import com.tingisweb.assignment.dto.AuthorDto;
 import com.tingisweb.assignment.dto.BlogPostDto;
 import com.tingisweb.assignment.entity.BlogPostEntity;
 import com.tingisweb.assignment.entity.UserEntity;
-import com.tingisweb.assignment.errorhandling.exception.EditAnotherEntityException;
-import com.tingisweb.assignment.errorhandling.exception.MissingIdException;
-import com.tingisweb.assignment.errorhandling.exception.NoContentException;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
+import com.tingisweb.assignment.errorhandling.exception.*;
 import com.tingisweb.assignment.mapper.BlogPostMapper;
 import com.tingisweb.assignment.repository.BlogPostRepository;
 import com.tingisweb.assignment.security.SecurityService;
@@ -58,13 +55,14 @@ public class BlogPostServiceImpl implements BlogPostService{
     @Override
     @Transactional
     public BlogPostDto update(Long id, BlogPostDto dto) {
-        if (id.toString().isEmpty()){
+        if (id == null || id.toString().isEmpty()){
             throw new MissingIdException();
         } else if (dto == null) {
             throw new IllegalArgumentException();
         } else if (!id.equals(dto.getId())) {
             throw new EditAnotherEntityException();
         }else {
+            currentUserAuthorizedForAction(id);
             if(blogPostRepository.findById(id).isEmpty()){
                 throw new ObjectNotFoundException(BLOG_POST_NOT_FOUND);
             }else {
@@ -78,9 +76,10 @@ public class BlogPostServiceImpl implements BlogPostService{
     @Override
     @Transactional
     public void delete(Long id) {
-        if(id.toString().isEmpty()){
+        if(id == null || id.toString().isEmpty()){
             throw new MissingIdException();
         }else {
+            currentUserAuthorizedForAction(id);
             if(blogPostRepository.findById(id).isEmpty()){
                 throw new ObjectNotFoundException(BLOG_POST_NOT_FOUND);
             }else {
@@ -102,4 +101,15 @@ public class BlogPostServiceImpl implements BlogPostService{
             throw new NoContentException();
         }
     }
+
+    public void currentUserAuthorizedForAction(Long blogPostId) {
+        BlogPostEntity blogPostEntity = blogPostRepository
+                .findById(blogPostId).orElseThrow(()->
+                        new ObjectNotFoundException(BLOG_POST_NOT_FOUND));
+        UserEntity currentUser = securityService.getAuthenticatedUser();
+        if(!blogPostEntity.getAuthor().getId().equals(currentUser.getId())){
+            throw new UnauthorizedException("Unauthorized action");
+        }
+    }
+
 }
