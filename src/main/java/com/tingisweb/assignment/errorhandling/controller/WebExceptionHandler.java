@@ -2,10 +2,7 @@ package com.tingisweb.assignment.errorhandling.controller;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.tingisweb.assignment.errorhandling.ErrorMessage;
-import com.tingisweb.assignment.errorhandling.exception.EditAnotherEntityException;
-import com.tingisweb.assignment.errorhandling.exception.FailedAuthenticationException;
-import com.tingisweb.assignment.errorhandling.exception.NoContentException;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
+import com.tingisweb.assignment.errorhandling.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -36,7 +33,7 @@ public class WebExceptionHandler {
     public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception){
         ErrorMessage errorMessage = ErrorMessage
                 .builder()
-                .message("Invalid argument")
+                .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
@@ -46,7 +43,7 @@ public class WebExceptionHandler {
     public ResponseEntity<Object> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception){
         ErrorMessage errorMessage = ErrorMessage
                 .builder()
-                .message("Not valid argument")
+                .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
@@ -66,7 +63,7 @@ public class WebExceptionHandler {
     public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException exception){
         ErrorMessage errorMessage = ErrorMessage
                 .builder()
-                .message("Illegal argument")
+                .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
@@ -119,7 +116,7 @@ public class WebExceptionHandler {
                 .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(value = {NoContentException.class})
@@ -140,6 +137,16 @@ public class WebExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {UnauthorizedException.class})
+    public ResponseEntity<Object> unauthorizedException(UnauthorizedException exception){
+        ErrorMessage errorMessage = ErrorMessage
+                .builder()
+                .message("Unauthorized action")
+                .timestamp(LocalDateTime.now())
+                .statusCode(400).build();
+        return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
 }
