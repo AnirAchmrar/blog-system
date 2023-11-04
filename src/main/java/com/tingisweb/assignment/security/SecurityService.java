@@ -1,7 +1,6 @@
 package com.tingisweb.assignment.security;
 
 import com.tingisweb.assignment.entity.UserEntity;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
 import com.tingisweb.assignment.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +40,7 @@ public class SecurityService {
             currentUserName = authentication.getName();
         }
         return userRepository.findUserByUsername(currentUserName).orElseThrow(() ->
-                new ObjectNotFoundException(USER_NOT_FOUND)
+                new UsernameNotFoundException(USER_NOT_FOUND)
         );
     }
 
