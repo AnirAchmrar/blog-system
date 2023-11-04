@@ -25,7 +25,7 @@ public class WebExceptionHandler {
                 .builder()
                 .message(exception.getMessage())
                 .timestamp(LocalDateTime.now())
-                .statusCode(404).build();
+                .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
