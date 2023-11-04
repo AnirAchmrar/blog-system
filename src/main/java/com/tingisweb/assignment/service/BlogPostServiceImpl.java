@@ -102,6 +102,22 @@ public class BlogPostServiceImpl implements BlogPostService{
         }
     }
 
+    @Override
+    public Page<BlogPostDto> findBlogPostsByAuthorId(Integer page, Integer size) {
+        UserEntity currentUser = securityService.getAuthenticatedUser();
+        page = page != null && page >= 1 ? page -1 : 0;
+        size = size != null && size >= 5 ? size : 5;
+        Pageable pageRequest = PageRequest.of(page,size,
+                Sort.by(Sort.Order.desc("publicationDate")));
+        Page<BlogPostEntity> entitiesPage = blogPostRepository.findBlogPostsByAuthorId(currentUser.getId(),
+                pageRequest);
+        if (!entitiesPage.getContent().isEmpty()){
+            return blogPostMapper.toPageDto(entitiesPage);
+        }else {
+            throw new NoContentException();
+        }
+    }
+
     public void currentUserAuthorizedForAction(Long blogPostId) {
         BlogPostEntity blogPostEntity = blogPostRepository
                 .findById(blogPostId).orElseThrow(()->

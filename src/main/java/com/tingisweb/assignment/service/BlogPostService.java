@@ -11,4 +11,6 @@ public interface BlogPostService {
     void delete(Long id);
     Page<BlogPostDto> findAll(Integer page, Integer size);
 
+    Page<BlogPostDto> findBlogPostsByAuthorId(Integer page, Integer size);
+
 }
