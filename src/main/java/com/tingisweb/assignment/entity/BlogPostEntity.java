@@ -16,6 +16,7 @@ public class BlogPostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     @Column(name = "publication_date")
     private LocalDateTime publicationDate;
