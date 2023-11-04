@@ -2,7 +2,6 @@ package com.tingisweb.assignment.service;
 
 import com.tingisweb.assignment.dto.UserDto;
 import com.tingisweb.assignment.entity.UserEntity;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
 import com.tingisweb.assignment.mapper.UserMapper;
 import com.tingisweb.assignment.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -46,9 +46,9 @@ class UserServiceTest {
     @Test
     void loadUserByUsername_Ko_UserNotFound() {
         when(userRepository.findUserByUsername(NON_EXISTING_USERNAME))
-                .thenThrow((ObjectNotFoundException.class));
+                .thenThrow((UsernameNotFoundException.class));
 
-        assertThrows(ObjectNotFoundException.class,
+        assertThrows(UsernameNotFoundException.class,
                 () -> userService.loadUserByUsername(NON_EXISTING_USERNAME));
     }
 
@@ -79,9 +79,9 @@ class UserServiceTest {
     @Test
     void findUserByUsername_Ko_UserNotFound() {
         when(userRepository.findUserByUsername(NON_EXISTING_USERNAME))
-                .thenThrow((ObjectNotFoundException.class));
+                .thenThrow((UsernameNotFoundException.class));
 
-        assertThrows(ObjectNotFoundException.class,
+        assertThrows(UsernameNotFoundException.class,
                 () -> userService.findUserByUsername(NON_EXISTING_USERNAME));
     }
 
