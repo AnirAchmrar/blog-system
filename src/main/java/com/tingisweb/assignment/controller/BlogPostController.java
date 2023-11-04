@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/blog_posts")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class BlogPostController {
 
     private final BlogPostServiceImpl blogPostServiceImpl;
@@ -42,6 +43,12 @@ public class BlogPostController {
     public ResponseEntity<Page<BlogPostDto>> findAll(@RequestParam("page") @Valid Integer page,
                                                      @RequestParam("size") @Valid Integer size){
         return new ResponseEntity<>(blogPostServiceImpl.findAll(page,size),HttpStatus.OK);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<Page<BlogPostDto>> findAllByCurrentUser(@RequestParam("page") @Valid Integer page,
+                                                     @RequestParam("size") @Valid Integer size){
+        return new ResponseEntity<>(blogPostServiceImpl.findBlogPostsByAuthorId(page,size),HttpStatus.OK);
     }
 
 }
