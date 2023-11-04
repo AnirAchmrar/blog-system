@@ -2,7 +2,6 @@ package com.tingisweb.assignment.service;
 
 import com.tingisweb.assignment.dto.UserDto;
 import com.tingisweb.assignment.entity.UserEntity;
-import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
 import com.tingisweb.assignment.mapper.UserMapper;
 import com.tingisweb.assignment.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (username != null){
-            UserEntity user =  userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFoundException(USER_NOT_FOUND));
+            UserEntity user =  userRepository.findUserByUsername(username).orElseThrow(()->new UsernameNotFoundException(USER_NOT_FOUND));
             return new User(username,user.getPassword(),new ArrayList<>());
         }else {
             throw new IllegalArgumentException(NULL_USERNAME);
@@ -37,7 +36,7 @@ public class UserService implements UserDetailsService {
 
     public UserDto findUserByUsername(String username){
         if (username != null){
-            return userMapper.toDto(userRepository.findUserByUsername(username).orElseThrow(()->new ObjectNotFoundException(USER_NOT_FOUND)));
+            return userMapper.toDto(userRepository.findUserByUsername(username).orElseThrow(()->new UsernameNotFoundException(USER_NOT_FOUND)));
         }else {
             throw new IllegalArgumentException(NULL_USERNAME);
         }
