@@ -1,8 +1,7 @@
 package com.tingisweb.assignment.security;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tingisweb.assignment.service.UserService;
+import com.tingisweb.assignment.service.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,14 +17,26 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * A custom filter to handle JWT (JSON Web Token) authentication and authorization.
+ */
 @Component
 @AllArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
-    ObjectMapper objectMapper;
+    private final UserServiceImpl userServiceImpl;
     private final JWTUtil jwtUtil;
 
+    /**
+     * Performs JWT token validation and authentication during the request processing.
+     *
+     * @param request      The HttpServletRequest for the incoming request.
+     * @param response     The HttpServletResponse for sending responses.
+     * @param filterChain  The FilterChain to continue the request processing.
+     * @throws ServletException             If a servlet exception occurs.
+     * @throws IOException                  If an I/O error occurs during the request processing.
+     * @throws JWTVerificationException     If JWT token verification fails.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException,
@@ -39,7 +50,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }else {
                 try {
                     String username = jwtUtil.validateTokenAndRetrieveSubject(jwt);
-                    UserDetails userDetails = userService.loadUserByUsername(username);
+                    UserDetails userDetails = userServiceImpl.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(username,
                                     userDetails.getPassword(),userDetails.getAuthorities());
