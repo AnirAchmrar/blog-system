@@ -30,6 +30,7 @@ public class AuthenticationController {
     /**
      * This endpoint is called by a POST request to log in a user by posting his credentials
      * (username and password).
+     *
      * @param credentials the user credentials that are the username and password.
      * @return for a successful login the endpoint respond with an access token and the requesting
      * user general data with an OK http status. Otherwise, an UsernameNotFoundException is thrown that
