@@ -123,7 +123,7 @@ public class WebExceptionHandler {
     public ResponseEntity<Object> noContentException(NoContentException exception){
         ErrorMessage errorMessage = ErrorMessage
                 .builder()
-                .message("No content found")
+                .message("No content found!")
                 .timestamp(LocalDateTime.now())
                 .statusCode(400).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
