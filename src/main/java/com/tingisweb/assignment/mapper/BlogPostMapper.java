@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * A mapper class for converting between BlogPostEntity and BlogPostDto objects.
+ */
 @Component
 @AllArgsConstructor
 public class BlogPostMapper implements GenericMapper<BlogPostEntity, BlogPostDto>{
@@ -52,6 +55,7 @@ public class BlogPostMapper implements GenericMapper<BlogPostEntity, BlogPostDto
         entity.setId(dto.getId());
         entity.setTitle(dto.getTitle());
         entity.setPublicationDate(dto.getPublicationDate());
+        // Retrieve the user (author) from the repository and set it in the entity.
         entity.setAuthor(userRepository.findById(dto.getAuthor().getId()).orElseThrow(()->
                 new ObjectNotFoundException(USER_NOT_FOUND)));
         entity.setContent(dto.getContent());
