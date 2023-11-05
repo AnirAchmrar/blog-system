@@ -1,7 +1,7 @@
 package com.tingisweb.assignment.controller;
 
 import com.tingisweb.assignment.dto.BlogPostDto;
-import com.tingisweb.assignment.service.BlogPostServiceImpl;
+import com.tingisweb.assignment.service.BlogPostService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,40 +19,43 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class BlogPostController {
 
-    private final BlogPostServiceImpl blogPostServiceImpl;
+    private final BlogPostService blogPostService;
 
     /**
      * This endpoint is called by a POST request to create a blog post by posting the blog post object.
+     *
      * @param blogPost the blog post object that wrap the necessary data for blog post creation,
      *                 post title and content.
      * @return for a successful creation the endpoint responds with the created blog post with all
-     * its data (like id, author name...) with an OK http status. For any data validation error, the
+     * its data (like ID, author name...) with an OK http status. For any data validation error, the
      * WebExceptionHandler will handle the request and response with the appropriate error message
      * and a BAD_REQUEST http status.
      */
     @PostMapping
     public ResponseEntity<BlogPostDto> save(@RequestBody @Valid BlogPostDto blogPost){
-        return new ResponseEntity<>(blogPostServiceImpl.save(blogPost), HttpStatus.OK);
+        return new ResponseEntity<>(blogPostService.save(blogPost), HttpStatus.OK);
     }
 
     /**
-     * This endpoint is called by a GET request to retrieve a blog post by the id that is present in
+     * This endpoint is called by a GET request to retrieve a blog post by the ID that is present in
      * the path.
-     * @param id the blog post id.
-     * @return for a successful retrieve, if the given id is actually has a mapping to and existing
+     *
+     * @param id the blog post ID.
+     * @return for a successful retrieve, if the given ID is actually has a mapping to and existing
      * blog post, the endpoint responds with the blog post object with all its data. Otherwise, if no
-     * mapping was found for the given id, the WebExceptionHandler responds with a message error of
+     * mapping was found for the given ID, the WebExceptionHandler responds with a message error of
      * 'Blog post not found!' and a BAD_REQUEST http status.
      */
     @GetMapping("/{id}")
     public ResponseEntity<BlogPostDto> findById(@PathVariable @Valid Long id){
-        return new ResponseEntity<>(blogPostServiceImpl.findById(id), HttpStatus.OK);
+        return new ResponseEntity<>(blogPostService.findById(id), HttpStatus.OK);
     }
 
     /**
-     * This endpoint is called by a PUT request to update a blog post by providing the id of the
+     * This endpoint is called by a PUT request to update a blog post by providing the ID of the
      * update intended blog post and the blog post object with updated data.
-     * @param id the blog post id to update.
+     *
+     * @param id the blog post ID to update.
      * @param blogPost the blog post object with updated data.
      * @return for a successful update, the endpoint responds with the updated blog post. Otherwise,
      * the update operation may cause MissingIdException, IllegalArgumentException,
@@ -62,13 +65,14 @@ public class BlogPostController {
     @PutMapping("/{id}")
     public ResponseEntity<BlogPostDto> update(@PathVariable @Valid Long id,
                                               @RequestBody @Valid BlogPostDto blogPost){
-        return new ResponseEntity<>(blogPostServiceImpl.update(id,blogPost), HttpStatus.OK);
+        return new ResponseEntity<>(blogPostService.update(id,blogPost), HttpStatus.OK);
     }
 
     /**
      * This endpoint is called by a DELETE request to delete a blog post by providing the if of the
      * deletion intended blog.
-     * @param id the blog post id to delete.
+     *
+     * @param id the blog post ID to delete.
      * @return for a successful deletion of the blog post, the endpoint responds with an empty
      * response body and ah OK http status. Otherwise, the deletion operation may cause
      * MissingIdException and ObjectNotFoundException, which trigger the response of WebExceptionHandler
@@ -76,13 +80,14 @@ public class BlogPostController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @Valid Long id){
-        blogPostServiceImpl.delete(id);
+        blogPostService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
      * This endpoint is called by a GET request to retrieve the page of blog posts by providing the
      * wanted page number and its size.
+     *
      * @param page the page number.
      * @param size the size of the page.
      * @return for a successful retrieve of blog posts, the endpoint responds with page object that
@@ -94,12 +99,13 @@ public class BlogPostController {
     @GetMapping
     public ResponseEntity<Page<BlogPostDto>> findAll(@RequestParam("page") @Valid Integer page,
                                                      @RequestParam("size") @Valid Integer size){
-        return new ResponseEntity<>(blogPostServiceImpl.findAll(page,size),HttpStatus.OK);
+        return new ResponseEntity<>(blogPostService.findAll(page,size),HttpStatus.OK);
     }
 
     /**
      * This endpoint is called by a GET request to retrieve the page of blog posts corresponding to
      * the authenticated user that sends the request by providing the wanted page number and its size.
+     *
      * @param page the page number.
      * @param size the size of the page.
      * @return for a successful retrieve of blog posts, the endpoint responds with page object that
@@ -114,7 +120,7 @@ public class BlogPostController {
     @GetMapping("/my")
     public ResponseEntity<Page<BlogPostDto>> findAllByCurrentUser(@RequestParam("page") @Valid Integer page,
                                                      @RequestParam("size") @Valid Integer size){
-        return new ResponseEntity<>(blogPostServiceImpl.findBlogPostsByAuthorId(page,size),HttpStatus.OK);
+        return new ResponseEntity<>(blogPostService.findBlogPostsByAuthorId(page,size),HttpStatus.OK);
     }
 
 }
