@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/blog_posts")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class BlogPostController {
 
     private final BlogPostServiceImpl blogPostServiceImpl;
