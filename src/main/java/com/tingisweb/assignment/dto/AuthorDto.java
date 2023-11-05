@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A Data Transfer Object (DTO) representing the author of a blog post.
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -12,6 +15,9 @@ import lombok.NoArgsConstructor;
 public class AuthorDto {
 
     private Long id;
+    /**
+     * The name of the author.
+     */
     private String authorName;
 
 }
