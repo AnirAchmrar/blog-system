@@ -9,7 +9,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tingisweb.assignment.errorhandling.exception.ObjectNotFoundException;
-import com.tingisweb.assignment.service.UserService;
+import com.tingisweb.assignment.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,19 +18,32 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * A service class for generating and validating JWT (JSON Web Token) tokens.
+ */
 @Component
 public class JWTUtil {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     @Value("${jwt_secret}")
     private String secret;
     public static final String USER_NOT_FOUND = "User not found!";
 
-    public String generateToken(String username) throws IllegalArgumentException, JWTCreationException {
+    /**
+     * Generates a JWT token for a given username.
+     *
+     * @param username The username for which the token is generated.
+     * @return The generated JWT token as a String.
+     * @throws IllegalArgumentException   If the input username is null.
+     * @throws JWTCreationException       If there is an issue with JWT token creation.
+     * @throws ObjectNotFoundException     If the user with the provided username is not found.
+     */
+    public String generateToken(String username) throws IllegalArgumentException, JWTCreationException,
+            ObjectNotFoundException {
         if (username!=null) {
             try {
-                UserDetails userDetails = userService.loadUserByUsername(username);
+                UserDetails userDetails = userServiceImpl.loadUserByUsername(username);
                 return JWT.create()
                         .withSubject(username)
                         .withClaim("username", userDetails.getUsername())
@@ -47,6 +60,13 @@ public class JWTUtil {
         }
     }
 
+    /**
+     * Validates a JWT token and retrieves the subject (username) from it.
+     *
+     * @param token The JWT token to validate.
+     * @return The subject (username) from the validated token.
+     * @throws JWTVerificationException If the token is not valid or has expired.
+     */
     public String validateTokenAndRetrieveSubject(String token) throws JWTVerificationException {
         if (token != null) {
             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secret))
