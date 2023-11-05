@@ -94,7 +94,7 @@ public class BlogPostController {
      * contain page data (page number, total elements...) and the content (blog posts). Otherwise, if
      * no content was found for the given page number a NoContentException will occur, which will
      * trigger the WebExceptionHandler response with the error message 'No content found!' and a
-     * BAD_REQUEST http status.
+     * NO_CONTENT http status.
      */
     @GetMapping
     public ResponseEntity<Page<BlogPostDto>> findAll(@RequestParam("page") @Valid Integer page,
@@ -112,7 +112,7 @@ public class BlogPostController {
      * contain page data (page number, total elements...) and the content (blog posts). Otherwise, if
      * no content was found for the given page number and authenticated user a NoContentException
      * will occur, which will trigger the WebExceptionHandler response with the error message 'No
-     * content found!' and a BAD_REQUEST http status. An UsernameNotFoundException may happen if the
+     * content found!' and a NO_CONTENT http status. An UsernameNotFoundException may happen if the
      * token was corrupted somehow after the request passes the security filter which will trigger
      * WebExceptionHandler to responds with 'Unauthenticated' error message and UNAUTHORIZED http
      * status.

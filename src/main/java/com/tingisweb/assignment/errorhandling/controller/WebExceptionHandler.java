@@ -183,7 +183,7 @@ public class WebExceptionHandler {
     }
 
     /**
-     * Handles NoContentException and returns a BAD_REQUEST response.
+     * Handles NoContentException and returns a NO_CONTENT response.
      *
      * @param exception The NoContentException to handle.
      * @return A response entity with an error message.
@@ -194,8 +194,8 @@ public class WebExceptionHandler {
                 .builder()
                 .message("No content found!")
                 .timestamp(LocalDateTime.now())
-                .statusCode(400).build();
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+                .statusCode(204).build();
+        return new ResponseEntity<>(errorMessage, HttpStatus.NO_CONTENT);
     }
 
     /**
