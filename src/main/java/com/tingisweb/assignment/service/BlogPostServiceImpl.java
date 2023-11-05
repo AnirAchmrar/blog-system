@@ -13,12 +13,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
+/**
+ * A service class that implements the BlogPostService interface for managing blog post-related operations.
+ */
 @Service
 @AllArgsConstructor
 @Validated
@@ -31,7 +35,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 
     @Override
     @Transactional
-    public BlogPostDto save(BlogPostDto dto) {
+    public BlogPostDto save(BlogPostDto dto) throws IllegalArgumentException {
         if (dto != null && dto.getTitle() != null && dto.getContent() != null){
             dto.setId(null);
             UserEntity currentUser = securityService.getAuthenticatedUser();
@@ -46,7 +50,7 @@ public class BlogPostServiceImpl implements BlogPostService{
     }
 
     @Override
-    public BlogPostDto findById(Long id) {
+    public BlogPostDto findById(Long id) throws ObjectNotFoundException {
         BlogPostEntity entity = blogPostRepository.findById(id).orElseThrow(()->
                 new ObjectNotFoundException(BLOG_POST_NOT_FOUND));
         return blogPostMapper.toDto(entity);
@@ -54,7 +58,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 
     @Override
     @Transactional
-    public BlogPostDto update(Long id, BlogPostDto dto) {
+    public BlogPostDto update(Long id, BlogPostDto dto) throws MissingIdException, IllegalArgumentException, EditAnotherEntityException, ObjectNotFoundException, UnauthorizedException {
         if (id == null || id.toString().isEmpty()){
             throw new MissingIdException();
         } else if (dto == null) {
@@ -75,7 +79,7 @@ public class BlogPostServiceImpl implements BlogPostService{
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws MissingIdException, ObjectNotFoundException, UnauthorizedException {
         if(id == null || id.toString().isEmpty()){
             throw new MissingIdException();
         }else {
@@ -89,7 +93,7 @@ public class BlogPostServiceImpl implements BlogPostService{
     }
 
     @Override
-    public Page<BlogPostDto> findAll(Integer page, Integer size) {
+    public Page<BlogPostDto> findAll(Integer page, Integer size) throws NoContentException {
         page = page != null && page >= 1 ? page -1 : 0;
         size = size != null && size >= 5 ? size : 5;
         Pageable pageRequest = PageRequest.of(page,size,
@@ -103,7 +107,7 @@ public class BlogPostServiceImpl implements BlogPostService{
     }
 
     @Override
-    public Page<BlogPostDto> findBlogPostsByAuthorId(Integer page, Integer size) {
+    public Page<BlogPostDto> findBlogPostsByAuthorId(Integer page, Integer size) throws UsernameNotFoundException, NoContentException {
         UserEntity currentUser = securityService.getAuthenticatedUser();
         page = page != null && page >= 1 ? page -1 : 0;
         size = size != null && size >= 5 ? size : 5;
@@ -118,7 +122,8 @@ public class BlogPostServiceImpl implements BlogPostService{
         }
     }
 
-    public void currentUserAuthorizedForAction(Long blogPostId) {
+    @Override
+    public void currentUserAuthorizedForAction(Long blogPostId) throws ObjectNotFoundException, UnauthorizedException {
         BlogPostEntity blogPostEntity = blogPostRepository
                 .findById(blogPostId).orElseThrow(()->
                         new ObjectNotFoundException(BLOG_POST_NOT_FOUND));
