@@ -16,9 +16,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.LocalDateTime;
 
+/**
+ * A controller advice class that handles exceptions and provides responses for various exceptions.
+ */
 @RestControllerAdvice
 public class WebExceptionHandler {
 
+    /**
+     * Handles ObjectNotFoundException and returns a BAD_REQUEST response.
+     *
+     * @param exception The ObjectNotFoundException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {ObjectNotFoundException.class})
     public ResponseEntity<Object> objectNotFoundException(ObjectNotFoundException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -29,6 +38,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles MethodArgumentNotValidException and returns a BAD_REQUEST response.
+     *
+     * @param exception The MethodArgumentNotValidException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -39,6 +54,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles MethodArgumentTypeMismatchException and returns a BAD_REQUEST response.
+     *
+     * @param exception The MethodArgumentTypeMismatchException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
     public ResponseEntity<Object> methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -49,6 +70,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles MissingPathVariableException and returns a BAD_REQUEST response.
+     *
+     * @param exception The MissingPathVariableException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {MissingPathVariableException.class})
     public ResponseEntity<Object> missingPathVariableException(MissingPathVariableException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -59,6 +86,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles IllegalArgumentException and returns a BAD_REQUEST response.
+     *
+     * @param exception The IllegalArgumentException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -69,6 +102,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles HttpMessageNotReadableException and returns a BAD_REQUEST response.
+     *
+     * @param exception The HttpMessageNotReadableException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseEntity<Object> httpMessageNotReadableException(HttpMessageNotReadableException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -79,6 +118,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles HttpMessageConversionException and returns a BAD_REQUEST response.
+     *
+     * @param exception The HttpMessageConversionException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {HttpMessageConversionException.class})
     public ResponseEntity<Object> httpMessageConversionException(HttpMessageConversionException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -89,6 +134,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles FailedAuthenticationException and returns an UNAUTHORIZED response.
+     *
+     * @param exception The FailedAuthenticationException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {FailedAuthenticationException.class})
     public ResponseEntity<Object> failedAuthenticationException(FailedAuthenticationException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -99,6 +150,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * Handles HttpRequestMethodNotSupportedException and returns a BAD_REQUEST response.
+     *
+     * @param exception The HttpRequestMethodNotSupportedException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<Object> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -109,6 +166,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles JWTVerificationException and returns an UNAUTHORIZED response.
+     *
+     * @param exception The JWTVerificationException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {JWTVerificationException.class})
     public ResponseEntity<Object> jwtVerificationException(JWTVerificationException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -119,6 +182,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * Handles NoContentException and returns a BAD_REQUEST response.
+     *
+     * @param exception The NoContentException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {NoContentException.class})
     public ResponseEntity<Object> noContentException(NoContentException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -129,6 +198,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles EditAnotherEntityException and returns a BAD_REQUEST response.
+     *
+     * @param exception The EditAnotherEntityException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {EditAnotherEntityException.class})
     public ResponseEntity<Object> editAnotherEntityException(EditAnotherEntityException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -139,6 +214,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles UnauthorizedException and returns an UNAUTHORIZED response.
+     *
+     * @param exception The UnauthorizedException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {UnauthorizedException.class})
     public ResponseEntity<Object> unauthorizedException(UnauthorizedException exception){
         ErrorMessage errorMessage = ErrorMessage
@@ -149,6 +230,12 @@ public class WebExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * Handles MissingIdException and returns an BAD_REQUEST response.
+     *
+     * @param exception The MissingIdException to handle.
+     * @return A response entity with an error message.
+     */
     @ExceptionHandler(value = {MissingIdException.class})
     public ResponseEntity<Object> missingIdException(MissingIdException exception){
         ErrorMessage errorMessage = ErrorMessage
