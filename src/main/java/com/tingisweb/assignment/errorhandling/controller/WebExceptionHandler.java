@@ -145,8 +145,18 @@ public class WebExceptionHandler {
                 .builder()
                 .message("Unauthorized action")
                 .timestamp(LocalDateTime.now())
-                .statusCode(400).build();
+                .statusCode(401).build();
         return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = {MissingIdException.class})
+    public ResponseEntity<Object> missingIdException(MissingIdException exception){
+        ErrorMessage errorMessage = ErrorMessage
+                .builder()
+                .message("Missing entity id")
+                .timestamp(LocalDateTime.now())
+                .statusCode(400).build();
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 
 }
