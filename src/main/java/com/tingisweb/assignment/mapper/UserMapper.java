@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A mapper class for converting between UserEntity and UserDto objects.
+ */
 @Component
 @AllArgsConstructor
 public class UserMapper implements GenericMapper<UserEntity, UserDto>{
@@ -30,7 +33,7 @@ public class UserMapper implements GenericMapper<UserEntity, UserDto>{
         dto.setLastname(entity.getLastname());
         dto.setEmail(entity.getEmail());
         dto.setPhone(entity.getPhone());
-        dto.setPassword(null);
+        dto.setPassword(null); // For security reasons, the password is not included in the DTO.
         dto.setUsername(entity.getUsername());
         return dto;
     }
@@ -52,6 +55,7 @@ public class UserMapper implements GenericMapper<UserEntity, UserDto>{
         entity.setLastname(entity.getLastname());
         entity.setPhone(entity.getPhone());
         entity.setEmail(entity.getEmail());
+        // Encrypt the password using BCrypt before setting it in the entity.
         String encryptedPassword = bCryptPasswordEncoder.encode(entity.getPassword());
         entity.setPassword(encryptedPassword);
         entity.setUsername(entity.getUsername());
