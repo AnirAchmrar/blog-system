@@ -1,0 +1,11 @@
+# Use the official OpenJDK 17 image as the base image
+FROM openjdk:17
+
+# Copy the application.properties file from the host to the image
+COPY ./application.properties application.properties
+
+# Copy the API JAR file from the host to the image
+COPY ./api.jar api.jar
+
+# Define the entry point command to run the Spring Boot application
+ENTRYPOINT ["java","-jar","/api.jar","--spring.config.location=./"]
