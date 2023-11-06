@@ -1,0 +1,20 @@
+# Build a Docker image from the current directory using a Dockerfile named Dockerfile.txt.
+# The "-t" flag assigns a tag (name) to the image, which is "blog-system-api".
+
+docker build -t blog-system-api . -f Dockerfile.txt
+
+# Run a Docker container from the "blog-system-api" image.
+# The "-d" flag runs the container in detached mode.
+# The "-p" flag maps port 8090 on the host to port 8090 in the container.
+# The "--name" flag assigns the container a name, which is "blog-system-api".
+
+docker run -d -p 8090:8090 --name blog-system-api blog-system-api
+
+# Stop a running Docker container named "blog-system-api".
+
+docker stop blog-system-api
+
+# Start a previously stopped Docker container named "blog-system-api".
+
+docker start blog-system-api
+

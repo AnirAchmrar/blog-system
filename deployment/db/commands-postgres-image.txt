@@ -1,0 +1,20 @@
+# Build a Docker image from the current directory using a Dockerfile named Dockerfile.txt.
+# The "-t" flag assigns a tag (name) to the image, which is "postgres".
+
+docker build -t postgres . -f Dockerfile.txt
+
+# Run a Docker container from the "postgres" image.
+# The "-d" flag runs the container in detached mode.
+# The "-p" flag maps port 5432 on the host to port 5432 in the container.
+# The "--name" flag assigns the container a name, which is "postgres".
+
+docker run -d -p 5432:5432 --name postgres postgres
+
+# Stop a running Docker container named "postgres".
+
+docker stop postgres
+
+# Start a previously stopped Docker container named "postgres".
+
+docker start postgres
+

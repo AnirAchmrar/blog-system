@@ -1,0 +1,20 @@
+# Build a Docker image from the current directory using a Dockerfile named Dockerfile.txt.
+# The "-t" flag assigns a tag (name) to the image, which is "blog-system-app".
+
+docker build -t blog-system-app . -f Dockerfile.txt
+
+# Run a Docker container from the "blog-system-app" image.
+# The "-d" flag runs the container in detached mode.
+# The "-p" flag maps port 4200 on the host to port 4200 in the container.
+# The "--name" flag assigns the container a name, which is "blog-system-app".
+
+docker run -d -p 4200:4200 --name blog-system-app blog-system-app
+
+# Stop a running Docker container named "blog-system-app".
+
+docker stop blog-system-app
+
+# Start a previously stopped Docker container named "blog-system-app".
+
+docker start blog-system-app
+

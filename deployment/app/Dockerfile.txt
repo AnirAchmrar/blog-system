@@ -1,0 +1,8 @@
+# Use the official Nginx image as the base image
+FROM nginx:latest
+
+# Copy the custom Nginx configuration file from the host to the image
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy the built Angular app from the host to the Nginx web server directory
+COPY /dist/blog-system-app /usr/share/nginx/html
